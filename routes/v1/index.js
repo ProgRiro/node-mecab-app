@@ -24,7 +24,25 @@ router.post("/mecab/word", function (req, res) {
       rObj[d[0]] = d[1];
       return rObj;
     });
-    res.json(data);
+    const resData = data.map((d, i) => {
+      return Object.keys(d)[0];
+    });
+    res.json(resData);
+  });
+});
+
+router.post("/mecab/wordpos", function (req, res) {
+  mecab.parse(req.body.data, function (err, result) {
+    if (err) throw err;
+    const data = result.map((d) => {
+      let rObj = {};
+      rObj[d[0]] = d[1];
+      return rObj;
+    });
+    const resData = data.map((d, i) => {
+      return { word: Object.keys(d)[0], pos: Object.values(d)[0] };
+    });
+    res.json(resData);
   });
 });
 
@@ -33,6 +51,7 @@ router.post("/mecab/word", function (req, res) {
  * Resp data : [{"名詞":1},{"助詞":3},{"動詞":2},{"助動詞":1}]
  */
 router.post("/mecab/num", function (req, res) {
+  console.log(req.body.data);
   mecab.parse(req.body.data, function (err, result) {
     if (err) throw err;
     const data = result
@@ -52,7 +71,10 @@ router.post("/mecab/num", function (req, res) {
             (e) => Object.keys(e)[0] === Object.keys(element)[0]
           ) === index
       );
-    res.json(data);
+    const resData = data.map((d, i) => {
+      return { name: Object.keys(d)[0], value: Object.values(d)[0] };
+    });
+    res.json(resData);
   });
 });
 
